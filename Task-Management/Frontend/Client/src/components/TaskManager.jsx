@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { BsPerson } from "react-icons/bs";
 import { MdDone } from "react-icons/md";
+import { Link } from "react-router-dom";
 
 const TaskManagement = () => {
   const [taskData, setTaskData] = useState({
@@ -114,9 +115,10 @@ const TaskManagement = () => {
       >
         Submit Task
       </button>
+      <br></br>
       <Link
         to="/"
-        className="bg-blue-500 text-white px-4 py-2 rounded inline-block"
+        className="bg-green-700 text-white px-4 py-2 rounded inline-block"
       >
         Return to Home
       </Link>
