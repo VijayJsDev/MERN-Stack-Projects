@@ -60,7 +60,9 @@ const TaskManagement = () => {
           className="border p-2 rounded w-full"
         />
 
-        <label className="block text-sm font-semibold mt-4 mb-2">Description:</label>
+        <label className="block text-sm font-semibold mt-4 mb-2">
+          Description:
+        </label>
         <textarea
           name="description"
           value={taskData.description}
@@ -68,7 +70,9 @@ const TaskManagement = () => {
           className="border p-2 rounded w-full"
         ></textarea>
 
-        <label className="block text-sm font-semibold mt-4 mb-2">Due Date:</label>
+        <label className="block text-sm font-semibold mt-4 mb-2">
+          Due Date:
+        </label>
         <input
           type="date"
           name="dueDate"
@@ -77,7 +81,9 @@ const TaskManagement = () => {
           className="border p-2 rounded w-full"
         />
 
-        <label className="block text-sm font-semibold mt-4 mb-2">Priority:</label>
+        <label className="block text-sm font-semibold mt-4 mb-2">
+          Priority:
+        </label>
         <select
           name="priority"
           value={taskData.priority}
@@ -108,7 +114,12 @@ const TaskManagement = () => {
       >
         Submit Task
       </button>
-
+      <Link
+        to="/"
+        className="bg-blue-500 text-white px-4 py-2 rounded inline-block"
+      >
+        Return to Home
+      </Link>
       {submitted && (
         <div className="mt-4 flex items-center text-green-500">
           <MdDone className="text-2xl mr-2" />

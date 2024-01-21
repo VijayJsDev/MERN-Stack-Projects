@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 const SignupForm = () => {
-  const [formData, setFormData] = useState({ emailOrPhone: '', password: '' });
+  const [formData, setFormData] = useState({ emailOrPhone: "", password: "" });
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -11,10 +11,10 @@ const SignupForm = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:3001/signup', {
-        method: 'POST',
+      const response = await fetch("http://localhost:3001/signup", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
       });
@@ -22,7 +22,7 @@ const SignupForm = () => {
       // Handle response as needed
       console.log(response);
     } catch (error) {
-      console.error('Error during signup:', error);
+      console.error("Error during signup:", error);
     }
   };
 
@@ -30,12 +30,12 @@ const SignupForm = () => {
     <div className="flex flex-col items-center justify-center h-screen">
       <h2 className="text-2xl font-bold mb-4">Sign Up for an Account</h2>
 
-      <form
-        className="w-full max-w-sm"
-        onSubmit={handleSubmit}
-      >
+      <form className="w-full max-w-sm" onSubmit={handleSubmit}>
         <div className="mb-4">
-          <label htmlFor="emailOrPhone" className="block text-gray-700 text-sm font-bold mb-2">
+          <label
+            htmlFor="emailOrPhone"
+            className="block text-gray-700 text-sm font-bold mb-2"
+          >
             Email or Phone:
           </label>
           <input
@@ -48,7 +48,10 @@ const SignupForm = () => {
         </div>
 
         <div className="mb-6">
-          <label htmlFor="password" className="block text-gray-700 text-sm font-bold mb-2">
+          <label
+            htmlFor="password"
+            className="block text-gray-700 text-sm font-bold mb-2"
+          >
             Password:
           </label>
           <input
@@ -67,6 +70,12 @@ const SignupForm = () => {
           Signup
         </button>
       </form>
+      <Link
+        to="/"
+        className="bg-blue-500 text-white px-4 py-2 rounded inline-block"
+      >
+        Return to Home
+      </Link>
     </div>
   );
 };
