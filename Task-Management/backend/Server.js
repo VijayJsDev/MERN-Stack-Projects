@@ -53,6 +53,30 @@ app.post('/login', async (req, res) => {
     }
   });
 
+  const taskSchema = new mongoose.Schema({
+    title: String,
+    description: String,
+    dueDate: String,
+    priority: String,
+    status: String,
+  });
+  
+  const Task = mongoose.model("Task", taskSchema);
+  
+  // Middleware
+  
+  // Routes
+  app.post("/tasks", async (req, res) => {
+    try {
+      const newTask = new Task(req.body);
+      await newTask.save();
+      res.status(201).json({ message: "Task submitted successfully!" });
+    } catch (error) {
+      console.error("Error submitting task:", error);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
+  });
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });

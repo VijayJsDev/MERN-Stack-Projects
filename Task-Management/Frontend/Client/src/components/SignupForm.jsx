@@ -1,4 +1,3 @@
-// SignupForm.js
 import React, { useState } from 'react';
 
 const SignupForm = () => {
@@ -28,15 +27,47 @@ const SignupForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label>Email or Phone:</label>
-      <input type="text" name="emailOrPhone" onChange={handleChange} />
+    <div className="flex flex-col items-center justify-center h-screen">
+      <h2 className="text-2xl font-bold mb-4">Sign Up for an Account</h2>
 
-      <label>Password:</label>
-      <input type="password" name="password" onChange={handleChange} />
+      <form
+        className="w-full max-w-sm"
+        onSubmit={handleSubmit}
+      >
+        <div className="mb-4">
+          <label htmlFor="emailOrPhone" className="block text-gray-700 text-sm font-bold mb-2">
+            Email or Phone:
+          </label>
+          <input
+            type="text"
+            id="emailOrPhone"
+            name="emailOrPhone"
+            className="appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
+            onChange={handleChange}
+          />
+        </div>
 
-      <button type="submit">Signup</button>
-    </form>
+        <div className="mb-6">
+          <label htmlFor="password" className="block text-gray-700 text-sm font-bold mb-2">
+            Password:
+          </label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            className="appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
+            onChange={handleChange}
+          />
+        </div>
+
+        <button
+          type="submit"
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        >
+          Signup
+        </button>
+      </form>
+    </div>
   );
 };
 
