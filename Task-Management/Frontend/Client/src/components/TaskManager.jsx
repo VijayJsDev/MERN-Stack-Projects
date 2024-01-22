@@ -37,6 +37,9 @@ const TaskManagement = () => {
           status: "Not Started",
         });
         setSubmitted(true);
+        setTimeout(() => {
+          setSubmitted(false);
+        }, 3000);
       } else {
         console.error("Error submitting task:", response.statusText);
       }
@@ -46,32 +49,37 @@ const TaskManagement = () => {
   };
 
   return (
-    <div className="container mx-auto p-8">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+      <h1 className="text-4xl font-bold mb-6 text-indigo-700">
+        Task Management
+      </h1>
       <div className="flex justify-end items-center mb-4">
-        <BsPerson className="text-2xl" />
+        <BsPerson className="text-2xl text-gray-600" />
       </div>
 
-      <div className="mb-8">
-        <label className="block text-sm font-semibold mb-2">Title:</label>
+      <div className="bg-white p-6 rounded shadow-md w-full max-w-md">
+        <label className="block text-sm font-semibold mb-2 text-gray-700">
+          Title:
+        </label>
         <input
           type="text"
           name="title"
           value={taskData.title}
           onChange={handleChange}
-          className="border p-2 rounded w-full"
+          className="border p-2 rounded w-full focus:outline-none focus:border-indigo-500"
         />
 
-        <label className="block text-sm font-semibold mt-4 mb-2">
+        <label className="block text-sm font-semibold mt-4 mb-2 text-gray-700">
           Description:
         </label>
         <textarea
           name="description"
           value={taskData.description}
           onChange={handleChange}
-          className="border p-2 rounded w-full"
+          className="border p-2 rounded w-full h-20 focus:outline-none focus:border-indigo-500"
         ></textarea>
 
-        <label className="block text-sm font-semibold mt-4 mb-2">
+        <label className="block text-sm font-semibold mt-4 mb-2 text-gray-700">
           Due Date:
         </label>
         <input
@@ -79,29 +87,31 @@ const TaskManagement = () => {
           name="dueDate"
           value={taskData.dueDate}
           onChange={handleChange}
-          className="border p-2 rounded w-full"
+          className="border p-2 rounded w-full focus:outline-none focus:border-indigo-500"
         />
 
-        <label className="block text-sm font-semibold mt-4 mb-2">
+        <label className="block text-sm font-semibold mt-4 mb-2 text-gray-700">
           Priority:
         </label>
         <select
           name="priority"
           value={taskData.priority}
           onChange={handleChange}
-          className="border p-2 rounded w-full"
+          className="border p-2 rounded w-full focus:outline-none focus:border-indigo-500"
         >
           <option value="Low">Low</option>
           <option value="Medium">Medium</option>
           <option value="High">High</option>
         </select>
 
-        <label className="block text-sm font-semibold mt-4 mb-2">Status:</label>
+        <label className="block text-sm font-semibold mt-4 mb-2 text-gray-700">
+          Status:
+        </label>
         <select
           name="status"
           value={taskData.status}
           onChange={handleChange}
-          className="border p-2 rounded w-full"
+          className="border p-2 rounded w-full focus:outline-none focus:border-indigo-500"
         >
           <option value="Not Started">Not Started</option>
           <option value="Pending">Pending</option>
