@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { TiTickOutline } from "react-icons/ti";
 const SignupForm = () => {
   const [formData, setFormData] = useState({ emailOrPhone: "", password: "" });
+  const [isSignUpSuccess, setSignUpSuccess] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -21,6 +25,10 @@ const SignupForm = () => {
 
       // Handle response as needed
       console.log(response);
+      setSignUpSuccess(true);
+      setTimeout(() => {
+        navigate("/login"); // Redirect
+      }, 3000);
     } catch (error) {
       console.error("Error during signup:", error);
     }
@@ -76,6 +84,12 @@ const SignupForm = () => {
       >
         Return to Home
       </Link>
+      {isSignUpSuccess && (
+        <h2 className="bg-green-500 text-white p-4 rounded mt-4">
+          <TiTickOutline className="inline-block mr-2" /> Login Successful!
+          Redirecting in a few seconds...
+        </h2>
+      )}
     </div>
   );
 };
