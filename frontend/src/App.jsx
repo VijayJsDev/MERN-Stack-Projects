@@ -1,12 +1,15 @@
-import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom'; 
+import { Outlet } from "react-router-dom";
+import Navbar from "./components/Navbar";
 
 function App() {
-  return <>
-    <div>
-      <h1>MMRL</h1>{/* Navbar Here */}
-      <Outlet />
-    </div>
-  </>;
+  return (
+    <>
+      <div>
+        <Navbar />
+        <Outlet />
+      </div>
+    </>
+  );
 }
 
 export default App;
