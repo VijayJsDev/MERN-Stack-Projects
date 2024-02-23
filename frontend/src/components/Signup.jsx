@@ -1,24 +1,49 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Signup() {
   const [form, setForm] = useState({
     username: "",
     email: "",
-    password: ""
-  })
+    password: "",
+  });
+  const [isNew, setIsNew] = useState(true);
+  const [error, setError] = useState(null);
+  // const [success, setSuccess] = useState("");
+  const navigate = useNavigate();
 
-  function updateForm(value){
+  function updateForm(value) {
     return setForm((prev) => {
-        return {...prev, ...value};
+      return { ...prev, ...value };
     });
-  };
-
-  async function formSubmitHandler(e){
-    e.preventDefault();
   }
 
-
+  async function formSubmitHandler(e) {
+    e.preventDefault();
+    const person = { ...form };
+    try {
+      let response;
+      response = await fetch("http://localhost:5050/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(person),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP Error! Status: ${response.status}`);
+      }
+    } catch (err) {
+      if (err.response && err.response.status === 400) {
+        setError("Email Is Already Registered");
+      } else {
+        setError("An error occurred while signing up. Please try again later.");
+      }
+    } finally {
+      setForm({ username: "", email: "", password: "" });
+      navigate("/");
+    }
+  }
 
   return (
     <div>
@@ -30,10 +55,13 @@ function Signup() {
             type="text"
             placeholder="My Name is..."
             value={form.username}
-            onChange={(e) => updateFormForm({name: e.target.value})}
+            onChange={(e) => updateForm({ username: e.target.value })}
           />
-          {form.name === "" ? <p style={{color: 'red'}}>Username cannot be Empty</p> : ""} 
-
+          {form.username === "" ? (
+            <p style={{ color: "red" }}>Username cannot be Empty</p>
+          ) : (
+            ""
+          )}
         </div>
         <div>
           <label>Enter Your Email Address</label>
@@ -41,9 +69,14 @@ function Signup() {
             type="email"
             placeholder="example123@gmail.com"
             value={form.email}
-            onChange={(e) => updateForm({email: e.target.value})}
+            onChange={(e) => updateForm({ email: e.target.value })}
           />
-          {form.email === "" ? <p style={{color: 'red'}}>email cannot be Empty</p> : ""} 
+          {form.email === "" ? (
+            <p style={{ color: "red" }}>email cannot be Empty</p>
+          ) : (
+            ""
+          )}
+          {error && <p style={{ color: "red" }}>{error}</p>}
         </div>
         <div>
           <label>Enter Your Password</label>
@@ -51,9 +84,13 @@ function Signup() {
             type="password"
             placeholder="enter your password here"
             value={form.password}
-            onChange={(e) => updateForm({password: e.target.value})}
+            onChange={(e) => updateForm({ password: e.target.value })}
           />
-          {form.password === "" ? <p style={{color: 'red'}}>Password cannot be Empty</p> : ""} 
+          {form.password === "" ? (
+            <p style={{ color: "red" }}>Password cannot be Empty</p>
+          ) : (
+            ""
+          )}
         </div>
         <div>
           <input type="submit" value="Confirm Signup" />
