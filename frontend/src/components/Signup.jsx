@@ -23,6 +23,7 @@ function Signup() {
     const person = { ...form };
     try {
       let response;
+      console.log(person);
       response = await fetch("http://localhost:5050/signup", {
         method: "POST",
         headers: {
@@ -40,8 +41,8 @@ function Signup() {
         setError("An error occurred while signing up. Please try again later.");
       }
     } finally {
-      setForm({ username: "", email: "", password: "" });
-      navigate("/");
+      // setForm({ username: "", email: "", password: "" });
+      // navigate("/");
     }
   }
 
