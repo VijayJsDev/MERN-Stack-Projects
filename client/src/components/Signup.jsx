@@ -8,9 +8,48 @@ function Signup() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
+  const [nameError, setNameError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
+
+  const handleFullnameChange = (e) => {
+    setFullName(e.target.value);
+    setNameError("");
+  };
+
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+    setEmailError("");
+  };
+
+  const passwordChangeHanlder = (e) => {
+    setPassword(e.target.value);
+    setPasswordError("");
+  };
+
+  const confirmPasswordChangeHandler = (e) => {
+    setConfirmPassword(e.target.value);
+    if(e.target.value !== password){
+      setConfirmPasswordError("Oops! Password Not Matching, Check Again!")
+    } else{
+      setConfirmPasswordError("");
+    }
+  };
 
   async function handleSubmit(e) {
     e.preventDefault();
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+      setMessage("Please enter a valid email address");
+      return; // Stop further execution
+    }
+
+    if (password !== confirmPassword) {
+      setMessage("Password and confirm password do not match");
+      return;
+    }
 
     try {
       const response = await fetch("http://localhost:5050/signup", {
@@ -31,7 +70,7 @@ function Signup() {
 
         // Redirect to login page after 3 seconds
         setTimeout(() => {
-          navigate('/');
+          navigate("/login");
         }, 3000);
       } else {
         // If response is not successful, parse error message from response body
@@ -55,8 +94,12 @@ function Signup() {
               type="text"
               placeholder="Enter Your Full Name"
               value={fullname}
-              onChange={(e) => setFullName(e.target.value)}
+              onChange={handleFullnameChange}
+              onBlur={() =>
+                !fullname.trim() && setNameError("Name Field Cannot Be Empty.")
+              }
             />
+            {nameError && <p style={{ color: "red" }}>{nameError}</p>}
           </div>
           <div>
             <label htmlFor="email">Email Address</label>
@@ -64,8 +107,17 @@ function Signup() {
               type="email"
               placeholder="example123@gmail.com"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={handleEmailChange}
+              onBlur={() => {
+                if (!email.trim()) {
+                  setEmailError("Email Field Should Not Be Empty!");
+                } else {
+                  setEmailError("");
+                }
+              }}
+              // onBlur={() => !email.trim() ? setEmailError("Email Field Should Not Be Empty" ) && !email.includes('@') ? <p style={{color: 'red'}}>Enter A Valid Email.</p> : ""}
             />
+            {emailError && <p style={{ color: "red" }}>{emailError}</p>}
           </div>
           <div>
             <label htmlFor="password">Password</label>
@@ -73,8 +125,13 @@ function Signup() {
               type="password"
               placeholder="Enter Your Password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={passwordChangeHanlder}
+              onBlur={() =>
+                !password.trim() &&
+                setPasswordError("Password Field Cannot Be Empty.")
+              }
             />
+            {passwordError && <p style={{ color: "red" }}>{passwordError}</p>}
           </div>
           <div>
             <label htmlFor="confirm-password">Confirm Password</label>
@@ -82,8 +139,12 @@ function Signup() {
               type="password"
               placeholder="Confirm Password"
               value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              onChange={confirmPasswordChangeHandler}
+              onBlur={() => !confirmPassword.trim() ? setConfirmPasswordError("Confirm Password Field Cannot Be Empty!"): setConfirmPasswordError("") }
             />
+            {confirmPasswordError && (
+              <p style={{ color: "red" }}>{confirmPasswordError}</p>
+            )}
           </div>
           <div>
             <input type="submit" />
