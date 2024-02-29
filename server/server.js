@@ -38,9 +38,22 @@ let signupCollection = db.collection("mmrlSignup");
 const router = express.Router();
 
 app.post("/signup", async (req, res) => {
-    const newUser = req.body;
-    const insertOneUser = signupCollection.insertOne(newUser);
-})
+    const {fullname, email, password} = req.body;
+    try{
+      const existingUser = await signupCollection.findOne({email: email});
+
+      if(existingUser){
+        return res.status(400).json({message: "Email Already in Use!!"})
+      } else{
+        const newUser = {fullname, email, password};
+        await signupCollection.insertOne(newUser);
+        return res.status(201).json({message: "Signup Successfull!!"})
+      }
+    }catch(error){
+      console.error("Error during signup: ", error);
+      return res.status(500).json({message: "Internal Server Error"})
+    }
+});
 app.listen(PORT, () => {
     console.log(`Backend Express Server Is Running On PORT ${PORT}`)
 })

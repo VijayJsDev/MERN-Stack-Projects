@@ -1,28 +1,49 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Signup() {
   const [fullname, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [message, setMessage] = useState("")
+  const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   async function handleSubmit(e) {
-    e.preventDefault()
-    
-    try{
+    e.preventDefault();
+
+    try {
       const response = await fetch("http://localhost:5050/signup", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({fullname, email, password, confirmPassword}),
-    });
-    } catch(err){
-      console.err("error while submitting", err);
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ fullname, email, password, confirmPassword }),
+      });
+
+      if (response.ok) {
+        // If response is successful, reset form fields and set success message
+        setFullName("");
+        setEmail("");
+        setPassword("");
+        setConfirmPassword("");
+        setMessage("Signup successful");
+
+        // Redirect to login page after 3 seconds
+        setTimeout(() => {
+          navigate('/');
+        }, 3000);
+      } else {
+        // If response is not successful, parse error message from response body
+        const errorData = await response.json();
+        setMessage(errorData.message);
+      }
+    } catch (err) {
+      console.error("error while submitting", err);
+      setMessage("An error occurred while processing your request");
     }
   }
+
   return (
     <>
       <div>
@@ -68,6 +89,7 @@ function Signup() {
             <input type="submit" />
           </div>
         </form>
+        {message && <div>{message}</div>}
         <p>
           Existing User? <Link to="/login">Login</Link>
         </p>
