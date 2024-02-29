@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useNavigation } from "react-router-dom";
+import { MdDone } from "react-icons/md";
 
 function Signup() {
   const [fullname, setFullName] = useState("");
@@ -12,6 +13,15 @@ function Signup() {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
+
+  const navigation = useNavigation();
+
+  let buttonText =
+    navigation.state === "submitting"
+      ? "Submitting Data"
+      : navigation.state === "idle"
+      ? "Submit Data"
+      : "";
 
   const handleFullnameChange = (e) => {
     setFullName(e.target.value);
@@ -30,9 +40,9 @@ function Signup() {
 
   const confirmPasswordChangeHandler = (e) => {
     setConfirmPassword(e.target.value);
-    if(e.target.value !== password){
-      setConfirmPasswordError("Oops! Password Not Matching, Check Again!")
-    } else{
+    if (e.target.value !== password) {
+      setConfirmPasswordError("Oops! Password Not Matching, Check Again!");
+    } else {
       setConfirmPasswordError("");
     }
   };
@@ -66,7 +76,12 @@ function Signup() {
         setEmail("");
         setPassword("");
         setConfirmPassword("");
-        setMessage("Signup successful");
+        setMessage(
+          <>
+            <MdDone></MdDone>{" "}
+            <p style={{ color: "green" }}>Submitted Successfully!</p>
+          </>
+        );
 
         // Redirect to login page after 3 seconds
         setTimeout(() => {
@@ -140,14 +155,20 @@ function Signup() {
               placeholder="Confirm Password"
               value={confirmPassword}
               onChange={confirmPasswordChangeHandler}
-              onBlur={() => !confirmPassword.trim() ? setConfirmPasswordError("Confirm Password Field Cannot Be Empty!"): setConfirmPasswordError("") }
+              onBlur={() =>
+                !confirmPassword.trim()
+                  ? setConfirmPasswordError(
+                      "Confirm Password Field Cannot Be Empty!"
+                    )
+                  : setConfirmPasswordError("")
+              }
             />
             {confirmPasswordError && (
               <p style={{ color: "red" }}>{confirmPasswordError}</p>
             )}
           </div>
           <div>
-            <input type="submit" />
+            <button type="submit">{buttonText}</button>
           </div>
         </form>
         {message && <div>{message}</div>}
