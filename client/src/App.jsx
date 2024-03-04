@@ -1,16 +1,18 @@
-import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Signup from "./components/Signup";
-import Login from "./components/Login";
-import Home from "./components/Home";
-import Booking from "./components/Booking";
+import RootLayout from "./pages/Root";
+import Home from "./pages/Home";
+import Authentication from "./pages/Authentication";
 
 function App() {
   const router = createBrowserRouter([
-    { path: "/", element: <Home /> },
-    { path: "/signup", element: <Signup /> },
-    { path: "/login", element: <Login /> },
-    { path: "/ticket-booking", element: <Booking /> },
+    {
+      path: "/",
+      element: <RootLayout />,
+      children: [
+        { index: true, element: <Home /> },
+        { path: "auth", element: <Authentication /> },
+      ],
+    },
   ]);
 
   return <RouterProvider router={router}></RouterProvider>;
