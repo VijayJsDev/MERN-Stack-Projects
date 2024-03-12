@@ -1,17 +1,7 @@
 import express from "express";
 import jwt from "jsonwebtoken";
-import { MongoClient } from "mongodb";
 import bcrypt from "bcrypt";
-
-const mongoURI = process.env.ATLAS_URI;
-
-const client = new MongoClient(mongoURI)
-await client
-  .connect()
-  .then(() => {
-    console.log("Connected To MongoDB");
-  })
-  .catch((error) => console.error("MongoDB Connection Error", error));
+import db from "../db/connection.js";
 
 const router = express.Router();
 
@@ -19,7 +9,6 @@ router.post("/signup", async (req, res, next) => {
   const { email, password } = req.body;
   console.log(email);
   try {
-    const db = client.db("mmrl");
     const mmrlUsersCollection = db.collection("mmrlUsers");
 
     const existingUser = await mmrlUsersCollection.findOne({ email: email });
@@ -27,7 +16,7 @@ router.post("/signup", async (req, res, next) => {
       return res.status(422).json({ message: "Email exists Already." });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10); 
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = {
       email: email,
@@ -41,14 +30,13 @@ router.post("/signup", async (req, res, next) => {
       process.env.SECRET_KEY,
       { expiresIn: "1h" }
     );
-    res
+    return res
       .status(201)
       .json({ message: "User Created!", user: createdUser, token: authToken });
   } catch (error) {
     console.error(error);
     next(error);
-  } finally {
-    await client.close();
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 });
 
@@ -56,7 +44,6 @@ router.post("/login", async (req, res, next) => {
   const { email, password } = req.body;
 
   try {
-    const db = client.db("mmrl");
     const mmrlUsersCollection = db.collection("mmrlUsers");
 
     const user = await mmrlUsersCollection.findOne({ email: email });
@@ -68,12 +55,10 @@ router.post("/login", async (req, res, next) => {
 
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
-      res
-        .status(422)
-        .json({
-          message: "Invalid Credentials.",
-          errors: { credentials: "Invalid Email or Password entered" },
-        });
+      res.status(422).json({
+        message: "Invalid Credentials.",
+        errors: { credentials: "Invalid Email or Password entered" },
+      });
     }
 
     const token = jwt.sign({ email: user.email }, process.env.SECRET_KEY, {
@@ -83,8 +68,6 @@ router.post("/login", async (req, res, next) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Internal Server Error" });
-  } finally {
-    await client.close();
   }
 });
 
