@@ -1,7 +1,8 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { Form, NavLink, useRouteLoaderData } from "react-router-dom";
 
 function MainNavigation() {
+  const token = useRouteLoaderData("root");
   return (
     <header>
       <nav>
@@ -15,6 +16,18 @@ function MainNavigation() {
           <li>
             <NavLink to="/">Login</NavLink>
           </li>
+          {!token && (
+            <li>
+              <NavLink to="/auth?mode=login">Authentication</NavLink>
+            </li>
+          )}
+          {token && (
+            <li>
+              <Form action="/logout" method="post">
+                <button>Logout</button>
+              </Form>
+            </li>
+          )}
         </ul>
       </nav>
     </header>
