@@ -1,11 +1,14 @@
 // BookTickets.js
 import React, { useState } from "react";
+
 import metroData from "./MetroData";
+import { useNavigate } from "react-router-dom";
 
 const BookTickets = () => {
   const [origin, setOrigin] = useState("");
   const [destination, setDestination] = useState("");
   const [quantity, setQuantity] = useState(1);
+  const navigation = useNavigate();
 
   const handleOriginChange = (event) => {
     setOrigin(event.target.value);
@@ -26,6 +29,16 @@ const BookTickets = () => {
   };
 
   const totalPrice = metroData.find((place) => place.name === destination)?.price * quantity;
+
+  // Function to handle form submission
+  const handleSubmit = (event) => {
+    event.preventDefault(); 
+    const totalPrice = metroData.find((place) => place.name === destination)?.price * quantity;
+    localStorage.setItem("bookingData", JSON.stringify({ origin, destination, quantity, totalPrice }));
+    navigation('/payment');
+  };
+  
+  
 
   return (
     <div>
@@ -62,6 +75,7 @@ const BookTickets = () => {
           Total Price: ${totalPrice}
         </p>
       )}
+      <button onClick={handleSubmit}>Proceed to Payment</button>
     </div>
   );
 };
