@@ -2,11 +2,8 @@ import React from 'react'
 
 function MmrlHome() {
   return (
-    <>
-        <h1>MMRL</h1>
-        <p>Book The Tickets Here!</p>
-    </>
+    <div>MmrlHome</div>
   )
 }
 
-export default MmrlHome
+export default MmrlHome;
