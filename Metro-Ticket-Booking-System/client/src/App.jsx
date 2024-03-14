@@ -5,7 +5,9 @@ import Authentication, { action as authAction } from "./pages/Authentication";
 import { checkAuthLoader, tokenLoader } from "./util/auth";
 import ErrorPage from "./pages/ErrorPage";
 import { action as logoutAction } from "./pages/Logout";
-import BookTickets from "./components/BookTickets";
+import BookTickets, {
+  action as ticketBookingAction,
+} from "./components/BookTickets";
 import Payment from "./pages/Payment";
 import ConfirmedTicket from "./pages/ConfirmedTicket";
 import PurchaseHistory from "./pages/PurchaseHistory";
@@ -25,6 +27,7 @@ function App() {
           path: "book-tickets",
           element: <BookTickets />,
           loader: checkAuthLoader,
+          action: ticketBookingAction,
         },
         { path: "logout", action: logoutAction },
         { path: "payment", element: <Payment />, action: checkAuthLoader },

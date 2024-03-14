@@ -1,24 +1,24 @@
-// BookTickets.js
 import React, { useState } from "react";
 import metroData from "./MetroData";
-import { useNavigate } from "react-router-dom";
+import { Form, useActionData } from "react-router-dom";
 
-const BookTickets = () => {
+function BookTickets() {
   const [origin, setOrigin] = useState("");
   const [destination, setDestination] = useState("");
   const [quantity, setQuantity] = useState(1);
-  const [price, setPrice] = useState(0);
-  const [totalPrice, setTotalPrice] = useState(0);
-  const navigation = useNavigate();
+  const [price, setPrice] = useState(null);
+  const [totalPrice, setTotalPrice] = useState(null);
+  const actionData = useActionData();
+  console.log(actionData);
 
-  const handleOriginChange = (event) => {
-    setOrigin(event.target.value);
+  const originChangeHandler = (e) => {
+    setOrigin(e.target.value);
   };
 
-  const handleDestinationChange = (event) => {
-    setDestination(event.target.value);
+  const destinationChangeHandler = (e) => {
+    setDestination(e.target.value);
     const selectedPlace = metroData.find(
-      (place) => place.name === event.target.value
+      (place) => place.name === e.target.value
     );
     if (selectedPlace) {
       setPrice(selectedPlace.price);
@@ -26,8 +26,8 @@ const BookTickets = () => {
     }
   };
 
-  const handleQuantityChange = (event) => {
-    let newQuantity = parseInt(event.target.value);
+  const quantityChangeHandler = (e) => {
+    let newQuantity = parseInt(e.target.value);
     if (newQuantity < 1) {
       newQuantity = 1;
     } else if (newQuantity > 6) {
@@ -36,80 +36,98 @@ const BookTickets = () => {
     setQuantity(newQuantity);
     setTotalPrice(price * newQuantity);
   };
-  
 
-  const handlePriceChange = (event) => {
-    setPrice(event.target.value);
-  };
-
-  const handleTotalPriceChange = () => {
-    setTotalPrice(price * newQuantity);
-  };
-
-  // Function to handle form submission
-  const handleSubmit = (event) => {
+  const ticketSubmissionHandler = (event) => {
     event.preventDefault();
-    localStorage.setItem(
-      "bookingData",
-      JSON.stringify({ origin, destination, quantity, totalPrice })
-    );
-    navigation("/payment");
   };
-
-  // Check if origin and destination are the same
-  const isDisabled = origin === destination;
 
   return (
-    <div>
-      <h2>Book Tickets</h2>
-      <div>
-        <label>Origin:</label>
-        <select value={origin} onChange={handleOriginChange}>
-          <option value="">Select Origin</option>
+    <>
+      <h1>MMRL Ticket Booking</h1>
+      <Form method="post">
+        <div>
+          <label>Choose Origin</label>
+          <select
+            value={origin}
+            onChange={originChangeHandler}
+            name="originName"
+          >
+            {metroData.map((place) => (
+              <option key={place.id} value={place.name}>
+                {place.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <label>Choose Destination</label>
+        <select
+          value={destination}
+          onChange={destinationChangeHandler}
+          name="destinationName"
+        >
           {metroData.map((place) => (
             <option key={place.id} value={place.name}>
               {place.name}
             </option>
           ))}
         </select>
-      </div>
-      <div>
-        <label>Destination:</label>
-        <select value={destination} onChange={handleDestinationChange}>
-          <option value="">Select Destination</option>
-          {metroData.map((place) => (
-            <option key={place.id} value={place.name}>
-              {place.name}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div>
-        <label>Quantity:</label>
-        <input
-          type="number"
-          value={quantity}
-          min="1"
-          max="6"
-          onChange={handleQuantityChange}
-        />
-      </div>
-      <div>
-        <label>Price:</label>
-        <input type="number" value={price} onChange={handlePriceChange}  disabled/>
-      </div>
-      <div>
-        <label>Total Price:</label>
-        <span>${totalPrice}</span>
-      </div>
-      {origin === destination && (
-        <p>Origin and destination can't be the same.</p>
-      )}
-      <button onClick={handleSubmit} disabled={isDisabled}>
-        Proceed to Payment
-      </button>
-    </div>
+        {origin === destination ? (
+          <p>Origin And Destination Can't Be Same</p>
+        ) : (
+          ""
+        )}
+        <div>
+          <label>Price Of Each Ticket</label>
+          <input type="text" value={price} readOnly name="priceName" />
+        </div>
+        <input type="hidden" name="price" value={price} />
+        <div>
+          <label>Quantity</label>
+          <input
+            type="number"
+            value={quantity}
+            min="1"
+            max="6"
+            onChange={quantityChangeHandler}
+            name="quantityName"
+          />
+          <p>Maximum Of 6 Tickets Can Be Booked!</p>
+        </div>
+        <div>
+          <h3>Total Price: ${totalPrice}</h3>
+        </div>
+        <div>
+          <button>Book Ticket</button>
+        </div>
+      </Form>
+    </>
   );
-};
+}
 
 export default BookTickets;
+
+export async function action({ request }) {
+  const formData = await request.formData();
+  const retrievedData = {
+    origin: formData.get("originName"),
+    destination: formData.get("destinationName"),
+    price: formData.get("priceName"),
+    quantity: formData.get("quantityName"),
+    user: localStorage.getItem('user'),
+  };
+  console.log(retrievedData);
+
+  const response = await fetch('http://localhost:5050/bookTickets', {
+    method:'POST',
+    headers: {
+      'Content-Type':'application/json',
+    },
+    body: JSON.stringify(retrievedData),
+  })
+  if(!response.ok){
+    return response;
+  }
+
+  const resData = await response.json();
+  return resData;
+}

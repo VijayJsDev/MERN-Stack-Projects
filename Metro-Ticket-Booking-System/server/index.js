@@ -2,8 +2,9 @@ import json from "body-parser";
 import express from "express";
 import authRoutes from "./routes/auth.js";
 import cors from "cors";
+import bookTickets from "./routes/bookTickets.js"
 
-//authRoutes
+
 const PORT = process.env.PORT || 5050;
 const app = express();
 
@@ -17,6 +18,7 @@ app.use((req, res, next) => {
 });
 
 app.use(authRoutes);
+app.use(bookTickets);
 
 app.listen(PORT, () => {
   console.log(`Server Running On ${PORT}`);

@@ -39,11 +39,13 @@ export async function action({ request }) {
   }
   const resData = await response.json();
   const token = resData.token;
+  const user = resData.email
 
   localStorage.setItem('token', token);
   const expiration = new Date();
   expiration.setHours(expiration.getHours() + 1);
   localStorage.setItem('expiration', expiration.toISOString());
+  localStorage.setItem('user', user);
 
   return redirect('/');
 }
