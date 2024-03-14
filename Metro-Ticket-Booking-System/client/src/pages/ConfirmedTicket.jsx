@@ -8,7 +8,7 @@ const ConfirmedTicket = () => {
 
   useEffect(() => {
     // Fetch metro booking details from local storage
-    const storedBookingDetails = localStorage.getItem("bookingDetails");
+    const storedBookingDetails = localStorage.getItem("bookingData");
     if (storedBookingDetails) {
       setBookingDetails(JSON.parse(storedBookingDetails));
     }

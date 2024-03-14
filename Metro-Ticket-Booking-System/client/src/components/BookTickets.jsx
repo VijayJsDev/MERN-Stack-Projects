@@ -1,6 +1,5 @@
 // BookTickets.js
 import React, { useState } from "react";
-
 import metroData from "./MetroData";
 import { useNavigate } from "react-router-dom";
 
@@ -8,6 +7,8 @@ const BookTickets = () => {
   const [origin, setOrigin] = useState("");
   const [destination, setDestination] = useState("");
   const [quantity, setQuantity] = useState(1);
+  const [price, setPrice] = useState(0);
+  const [totalPrice, setTotalPrice] = useState(0);
   const navigation = useNavigate();
 
   const handleOriginChange = (event) => {
@@ -16,6 +17,13 @@ const BookTickets = () => {
 
   const handleDestinationChange = (event) => {
     setDestination(event.target.value);
+    const selectedPlace = metroData.find(
+      (place) => place.name === event.target.value
+    );
+    if (selectedPlace) {
+      setPrice(selectedPlace.price);
+      setTotalPrice(selectedPlace.price * quantity);
+    }
   };
 
   const handleQuantityChange = (event) => {
@@ -26,19 +34,30 @@ const BookTickets = () => {
       newQuantity = 6;
     }
     setQuantity(newQuantity);
+    setTotalPrice(price * newQuantity);
+  };
+  
+
+  const handlePriceChange = (event) => {
+    setPrice(event.target.value);
   };
 
-  const totalPrice = metroData.find((place) => place.name === destination)?.price * quantity;
+  const handleTotalPriceChange = () => {
+    setTotalPrice(price * newQuantity);
+  };
 
   // Function to handle form submission
   const handleSubmit = (event) => {
-    event.preventDefault(); 
-    const totalPrice = metroData.find((place) => place.name === destination)?.price * quantity;
-    localStorage.setItem("bookingData", JSON.stringify({ origin, destination, quantity, totalPrice }));
-    navigation('/payment');
+    event.preventDefault();
+    localStorage.setItem(
+      "bookingData",
+      JSON.stringify({ origin, destination, quantity, totalPrice })
+    );
+    navigation("/payment");
   };
-  
-  
+
+  // Check if origin and destination are the same
+  const isDisabled = origin === destination;
 
   return (
     <div>
@@ -67,15 +86,28 @@ const BookTickets = () => {
       </div>
       <div>
         <label>Quantity:</label>
-        <input type="number" value={quantity} min="1" max="6" onChange={handleQuantityChange} />
+        <input
+          type="number"
+          value={quantity}
+          min="1"
+          max="6"
+          onChange={handleQuantityChange}
+        />
       </div>
-      {origin === destination && <p>Origin and destination can't be the same.</p>}
-      {totalPrice && (
-        <p>
-          Total Price: ${totalPrice}
-        </p>
+      <div>
+        <label>Price:</label>
+        <input type="number" value={price} onChange={handlePriceChange}  disabled/>
+      </div>
+      <div>
+        <label>Total Price:</label>
+        <span>${totalPrice}</span>
+      </div>
+      {origin === destination && (
+        <p>Origin and destination can't be the same.</p>
       )}
-      <button onClick={handleSubmit}>Proceed to Payment</button>
+      <button onClick={handleSubmit} disabled={isDisabled}>
+        Proceed to Payment
+      </button>
     </div>
   );
 };
