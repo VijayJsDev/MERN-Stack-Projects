@@ -1,15 +1,13 @@
 import React, { useState } from "react";
 import metroData from "./MetroData";
-import { Form, useActionData } from "react-router-dom";
+import { Form, redirect, useActionData } from "react-router-dom";
 
 function BookTickets() {
   const [origin, setOrigin] = useState("");
   const [destination, setDestination] = useState("");
   const [quantity, setQuantity] = useState(1);
-  const [price, setPrice] = useState(null);
-  const [totalPrice, setTotalPrice] = useState(null);
-  const actionData = useActionData();
-  console.log(actionData);
+  const [price, setPrice] = useState("");
+  const [totalPrice, setTotalPrice] = useState("");
 
   const originChangeHandler = (e) => {
     setOrigin(e.target.value);
@@ -115,7 +113,7 @@ export async function action({ request }) {
     quantity: formData.get("quantityName"),
     user: localStorage.getItem('user'),
   };
-  console.log(retrievedData);
+  localStorage.setItem('bookingDetails', JSON.stringify(retrievedData));
 
   const response = await fetch('http://localhost:5050/bookTickets', {
     method:'POST',
@@ -129,5 +127,5 @@ export async function action({ request }) {
   }
 
   const resData = await response.json();
-  return resData;
+  return redirect('/payment');
 }

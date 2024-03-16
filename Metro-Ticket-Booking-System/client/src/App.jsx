@@ -8,7 +8,7 @@ import { action as logoutAction } from "./pages/Logout";
 import BookTickets, {
   action as ticketBookingAction,
 } from "./components/BookTickets";
-import Payment from "./pages/Payment";
+import Payment, { action as paymentAction } from "./pages/Payment";
 import ConfirmedTicket from "./pages/ConfirmedTicket";
 import PurchaseHistory from "./pages/PurchaseHistory";
 
@@ -30,7 +30,12 @@ function App() {
           action: ticketBookingAction,
         },
         { path: "logout", action: logoutAction },
-        { path: "payment", element: <Payment />, action: checkAuthLoader },
+        {
+          path: "payment",
+          element: <Payment />,
+          loader: checkAuthLoader,
+          action: paymentAction,
+        },
         {
           path: "confirmed-ticket",
           element: <ConfirmedTicket />,

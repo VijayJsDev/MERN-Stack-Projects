@@ -1,65 +1,171 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Form, redirect } from "react-router-dom";
 
-const Payment = () => {
-  const [tokenBalance, setTokenBalance] = useState(100);
+function Payment() {
   const [bookingDetails, setBookingDetails] = useState(null);
-  const navigate = useNavigate();
+  const [paymentModeIsClicked, setPaymentModeIsClicked] = useState(false);
+  const [upiModeIsClicked, setUpiModeIsClicked] = useState(false);
 
   useEffect(() => {
-    // Fetch metro booking details from local storage
-    const storedBookingDetails = localStorage.getItem("bookingData");
+    const storedBookingDetails = localStorage.getItem("bookingDetails");
     if (storedBookingDetails) {
       setBookingDetails(JSON.parse(storedBookingDetails));
     }
-
-    // Fetch token balance from local storage
-    const storedTokenBalance = localStorage.getItem("tokenBalance");
-    if (storedTokenBalance) {
-      setTokenBalance(parseFloat(storedTokenBalance));
-    }
   }, []);
 
-  const handleContinue = () => {
-    if (!bookingDetails) {
-      console.error("No booking details found.");
-      return;
-    }
+  const handlePaymentModeClick = () => {
+    setPaymentModeIsClicked(!paymentModeIsClicked);
+  };
 
-    const price = bookingDetails.totalPrice;
+  const handleUpiModeClick = () => {
+    setUpiModeIsClicked(!upiModeIsClicked);
+  };
 
-    if (tokenBalance < price) {
-      console.error("Insufficient balance to proceed with payment.");
-      return;
-    }
-
-    const remainingBalance = tokenBalance - price;
-
-    // Update the token balance in local storage
-    localStorage.setItem("tokenBalance", remainingBalance.toString());
-    navigate('/confirmed-ticket');
-    // Optionally, you can redirect the user to a success page or perform any other action
-    console.log("Payment successful. Remaining balance:", remainingBalance);
-
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    // Ensure only numbers are allowed in input fields
+    if (!/^\d*$/.test(value)) return;
+    // Limit card number to 16 digits, month and year to 2 digits, and CVV to 3 digits
+    if (name === "cardno" && value.length > 16) return;
+    if ((name === "month" || name === "year") && value.length > 2) return;
+    if (name === "cvv" && value.length > 3) return;
   };
 
   return (
-    <div>
-      <h2>Payment Details</h2>
-      <p>Token Balance: ${tokenBalance}</p>
-      <p>Booking Details:</p>
-      {bookingDetails ? (
-        <div>
-          <p>Origin: {bookingDetails.origin}</p>
-          <p>Destination: {bookingDetails.destination}</p>
-          <p>Price: ${bookingDetails.totalPrice}</p>
-        </div>
-      ) : (
-        <p>No booking details found.</p>
+    <>
+      <header>Hello {bookingDetails?.user || "Guest"}!</header>
+      <div>
+        {bookingDetails ? (
+          <div>
+            <h1>Confirm Booking Details</h1>
+            <p>Origin: {bookingDetails.origin}</p>
+            <p>Destination: {bookingDetails.destination}</p>
+            <p>Price: ${bookingDetails.price}</p>
+            <p>Quantity: {bookingDetails.quantity}</p>
+          </div>
+        ) : (
+          <p>No Payment Details Found.</p>
+        )}
+      </div>
+      <h1>Payment Modes</h1>
+      <h5 onClick={handlePaymentModeClick}>Pay Via Debit Card</h5>
+      {paymentModeIsClicked && (
+        <Form method="post">
+          <div>
+            <label>Card No:</label>
+            <input
+              type="text"
+              name="cardno"
+              placeholder="Enter 16 Digits Card No"
+              maxLength="16"
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          <div>
+            <label>Expiry Date</label>
+            <input
+              type="text"
+              name="expirymm"
+              placeholder="MM"
+              maxLength="2"
+              onChange={handleInputChange}
+              required
+            />
+            <input
+              type="text"
+              name="expiryyy"
+              placeholder="YY"
+              maxLength="2"
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          <div>
+            <label>CVV</label>
+            <input
+              type="text"
+              name="cvv"
+              placeholder="001"
+              maxLength="3"
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          <div>
+            <input
+              type="number"
+              name="phoneNumber"
+              placeholder="Enter Your Mobile Number"
+              maxLength="10"
+              required
+            />
+          </div>
+          <button type="submit">Pay ${bookingDetails.price}</button>
+        </Form>
       )}
-      <button onClick={handleContinue}>Continue with stored value pass</button>
-    </div>
+      <h5 onClick={handleUpiModeClick}>Pay Via UPI/Mobile Number</h5>
+      {upiModeIsClicked && (
+        <div>
+          <Form method="post">
+            <input type="text" placeholder="Enter Your UPI ID" name="upi" />
+            <button>Pay ${bookingDetails.price}</button>
+          </Form>
+        </div>
+      )}
+    </>
   );
-};
+}
 
 export default Payment;
+export async function action({ request }) {
+  const data = await request.formData();
+  const formData = {
+    cardNo: data.get("cardno") || "",
+    expiryMM: data.get("expirymm") || "",
+    expiryYY: data.get("expiryyy") || "",
+    cvv: data.get("cvv") || "",
+    phoneNumber: data.get("phoneNumber") || "", 
+    upi: data.get("upi") || "",
+  };
+
+  // Ensure phone number is in E.164 format
+  const formattedPhoneNumber = `${formData.phoneNumber}`;
+
+  const response = await fetch("http://localhost:5050/payment", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(formData),
+  });
+
+  if (response.ok) {
+    const responseData = await response.json();
+    console.log(responseData);
+    // Prompt user for OTP
+    const otp = prompt("Enter OTP:");
+    // Send OTP and phoneNumber to server for verification
+    const otpResponse = await fetch("http://localhost:5050/verify", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ otp, phoneNumber: formattedPhoneNumber }), // Pass formatted phone number
+    });
+
+    if (otpResponse.ok) {
+      // Redirect to confirmed ticket page if OTP verification is successful
+      return redirect("/confirmed-ticket");
+    } else {
+      console.error("Invalid OTP. Payment failed.");
+      return;
+    }
+  } else if (response.status === 400) {
+    const errorData = await response.json();
+    console.error(errorData);
+    return;
+  } else {
+    console.error("An error occurred:", response.statusText);
+  }
+}
