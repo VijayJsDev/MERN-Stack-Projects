@@ -112,5 +112,28 @@ router.post("/verify", async (req, res) => {
     res.status(500).json({ message: "Error verifying OTP." });
   }
 });
+router.get("/purchase-history", async (req, res) => {
+  try {
+    const userEmail = req.query.email;
+
+    // Assuming you're using MongoDB
+    const collection = db.collection("mmrlUsers");
+
+    // Check if the user exists
+    const user = await collection.findOne({ email: userEmail });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Retrieve the user's purchase history
+    const purchaseHistory = user.bookings || [];
+
+    return res.status(200).json({ purchaseHistory });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
 
 export default router;

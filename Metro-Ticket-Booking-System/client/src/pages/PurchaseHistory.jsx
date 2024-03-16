@@ -1,32 +1,61 @@
-import React, { useState, useEffect } from "react";
+// Assuming you're making this request from a React component
+import React, { useEffect, useState } from "react";
 
-const PurchaseHistory = () => {
-  const [bookingDetails, setBookingDetails] = useState(null);
+function PurchaseHistory() {
+  const [purchaseHistory, setPurchaseHistory] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const storedBookingDetails = localStorage.getItem("confirmedBooking");
-    if (storedBookingDetails) {
-      setBookingDetails(JSON.parse(storedBookingDetails));
-    }
+    const fetchPurchaseHistory = async () => {
+      try {
+        const userEmail = localStorage.getItem("user");
+        const response = await fetch(`http://localhost:5050/purchase-history?email=${userEmail}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch purchase history");
+        }
+
+        const data = await response.json();
+        setPurchaseHistory(data.purchaseHistory);
+        setLoading(false);
+      } catch (error) {
+        setError(error.message);
+        setLoading(false);
+      }
+    };
+
+    fetchPurchaseHistory();
   }, []);
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  if (error) {
+    return <p>Error: {error}</p>;
+  }
 
   return (
     <div>
       <h2>Purchase History</h2>
-      {bookingDetails ? (
-        <div>
-          <p>Booking ID: {bookingDetails.id}</p>
-          <p>Booking Time: {bookingDetails.time}</p>
-          {/* <p>Booking Details:</p>
-          <p>Origin: {bookingDetails.details.origin}</p>
-          <p>Destination: {bookingDetails.details.destination}</p>
-          <p>Price: ${bookingDetails.details.totalPrice}</p> */}
-        </div>
-      ) : (
-        <p>No orders found.</p>
-      )}
+      <ul>
+        {purchaseHistory.map((booking, index) => (
+          <li key={index}>
+            <p>Origin: {booking.origin}</p>
+            <p>Destination: {booking.destination}</p>
+            <p>Price: ${booking.price}</p>
+            <p>Quantity: {booking.quantity}</p>
+          </li>
+        ))}
+      </ul>
     </div>
   );
-};
+}
 
 export default PurchaseHistory;
