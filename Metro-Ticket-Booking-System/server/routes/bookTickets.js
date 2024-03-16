@@ -63,16 +63,12 @@ router.post("/bookTickets", async (req, res, next) => {
   }
 });
 router.post("/payment", async (req, res) => {
-  const { cardNo, expiryMM, expiryYY, cvv, phoneNumber, upi } = req.body;
-
-  // Dummy card details for validation
+  const { cardNo, expiryMM, expiryYY, cvv } = req.body;
+  let phoneNumber = process.env.MYPHONENUMBER;
   const dummyCardNo = "1234567890123456";
   const dummyExpiryMM = "12";
   const dummyExpiryYY = "25";
   const dummyCvv = "123";
-
-  // Dummy UPI details for validation
-  const dummyUpi = "dummy@upi";
 
   let paymentMethod = "";
 
@@ -83,16 +79,13 @@ router.post("/payment", async (req, res) => {
     cvv === dummyCvv
   ) {
     paymentMethod = "card";
-  } else if (upi === dummyUpi) {
-    paymentMethod = "upi";
   } else {
     return res.status(400).json({ message: "Invalid payment details." });
   }
 
-  // Send OTP for verification
   try {
-    await sendOTP(`+91${phoneNumber}`); // Use provided phoneNumber for OTP sending
-    res.status(200).json({ message: `OTP sent to ${phoneNumber}` }); // Use provided phoneNumber in the response
+    await sendOTP(`+91${phoneNumber}`);
+    res.status(200).json({ message: `OTP sent to ${phoneNumber}` });
   } catch (error) {
     console.error("Error sending OTP:", error);
     res.status(500).json({ message: "Error sending OTP." });

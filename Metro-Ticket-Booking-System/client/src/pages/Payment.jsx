@@ -4,7 +4,6 @@ import { Form, redirect } from "react-router-dom";
 function Payment() {
   const [bookingDetails, setBookingDetails] = useState(null);
   const [paymentModeIsClicked, setPaymentModeIsClicked] = useState(false);
-  const [upiModeIsClicked, setUpiModeIsClicked] = useState(false);
 
   useEffect(() => {
     const storedBookingDetails = localStorage.getItem("bookingDetails");
@@ -17,15 +16,9 @@ function Payment() {
     setPaymentModeIsClicked(!paymentModeIsClicked);
   };
 
-  const handleUpiModeClick = () => {
-    setUpiModeIsClicked(!upiModeIsClicked);
-  };
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    // Ensure only numbers are allowed in input fields
     if (!/^\d*$/.test(value)) return;
-    // Limit card number to 16 digits, month and year to 2 digits, and CVV to 3 digits
     if (name === "cardno" && value.length > 16) return;
     if ((name === "month" || name === "year") && value.length > 2) return;
     if (name === "cvv" && value.length > 3) return;
@@ -92,26 +85,9 @@ function Payment() {
               required
             />
           </div>
-          <div>
-            <input
-              type="number"
-              name="phoneNumber"
-              placeholder="Enter Your Mobile Number"
-              maxLength="10"
-              required
-            />
-          </div>
+
           <button type="submit">Pay ${bookingDetails.price}</button>
         </Form>
-      )}
-      <h5 onClick={handleUpiModeClick}>Pay Via UPI/Mobile Number</h5>
-      {upiModeIsClicked && (
-        <div>
-          <Form method="post">
-            <input type="text" placeholder="Enter Your UPI ID" name="upi" />
-            <button>Pay ${bookingDetails.price}</button>
-          </Form>
-        </div>
       )}
     </>
   );
@@ -125,8 +101,7 @@ export async function action({ request }) {
     expiryMM: data.get("expirymm") || "",
     expiryYY: data.get("expiryyy") || "",
     cvv: data.get("cvv") || "",
-    phoneNumber: data.get("phoneNumber") || "", 
-    upi: data.get("upi") || "",
+    phoneNumber: data.get("phoneNumber") || "",
   };
 
   // Ensure phone number is in E.164 format
