@@ -1,5 +1,6 @@
 // Assuming you're making this request from a React component
 import React, { useEffect, useState } from "react";
+import './PurchaseHistory.css';
 
 function PurchaseHistory() {
   const [purchaseHistory, setPurchaseHistory] = useState([]);
@@ -34,19 +35,19 @@ function PurchaseHistory() {
   }, []);
 
   if (loading) {
-    return <p>Loading...</p>;
+    return <p className="loading">Loading...</p>;
   }
 
   if (error) {
-    return <p>Error: {error}</p>;
+    return <p className="error">Error: {error}</p>;
   }
 
   return (
-    <div>
+    <div className="container">
       <h2>Purchase History</h2>
       <ul>
         {purchaseHistory.map((booking, index) => (
-          <li key={index}>
+          <li id="lis" key={index}>
             <p>Origin: {booking.origin}</p>
             <p>Destination: {booking.destination}</p>
             <p>Price: ${booking.price}</p>

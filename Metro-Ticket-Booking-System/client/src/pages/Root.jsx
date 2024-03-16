@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import MainNavigation from "../components/MainNavigation";
 import { Outlet, useLoaderData, useSubmit } from "react-router-dom";
 import { getTokenDuration } from "../util/auth";
+import Footer from "../components/Footer";
 
 function RootLayout() {
   const token = useLoaderData();
@@ -31,6 +32,7 @@ function RootLayout() {
       <main>
         <Outlet />
       </main>
+      <Footer />
     </>
   );
 }

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Form, redirect } from "react-router-dom";
+import './Payment.css';
+import { FaCreditCard } from "react-icons/fa";
 
 function Payment() {
   const [bookingDetails, setBookingDetails] = useState(null);
@@ -26,8 +28,8 @@ function Payment() {
 
   return (
     <>
-      <header>Hello {bookingDetails?.user || "Guest"}!</header>
-      <div>
+      <header className="header">Hello {bookingDetails?.user || "Guest"}!</header>
+      <div className="container">
         {bookingDetails ? (
           <div>
             <h1>Confirm Booking Details</h1>
@@ -41,9 +43,9 @@ function Payment() {
         )}
       </div>
       <h1>Payment Modes</h1>
-      <h5 onClick={handlePaymentModeClick}>Pay Via Debit Card</h5>
+      <h5 onClick={handlePaymentModeClick} className="debit-card-heading"><FaCreditCard></FaCreditCard>Pay Via Debit Card</h5>
       {paymentModeIsClicked && (
-        <Form method="post">
+        <Form method="post" className="form">
           <div>
             <label>Card No:</label>
             <input

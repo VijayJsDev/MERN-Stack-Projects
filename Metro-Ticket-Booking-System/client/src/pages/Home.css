@@ -1,0 +1,98 @@
+#main-tab {
+  text-align: center;
+  padding: 20px;
+  background-color: #333;
+}
+
+#mmrl-main-image {
+  max-width: 80%;
+  height: auto;
+  color: #fff;
+}
+
+#mmrl-heading {
+  color: #fff;
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
+.container-1,
+.container-2 {
+  display: flex;
+  margin: 1rem;
+  padding: 20px;
+  border: 3px solid #ccc;
+  background-color: #333;
+}
+
+.container-1 p,
+.container-2 p {
+  justify-content: center;
+  align-items: center;
+  margin-top: 90px;
+  color: #fff;
+}
+
+.container-1 img,
+.container-2 img {
+  max-width: 50%;
+  height: auto;
+}
+
+.tabs {
+  display: flex;
+  color: #fff;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  background-color: #333;
+}
+
+.tabs > div {
+  padding: 10px;
+  border: 3px solid #ccc;
+  border-radius: 10px;
+  cursor: pointer;
+  flex: 1;
+  max-width: calc(33.333% - 20px);
+  box-sizing: border-box;
+  text-align: center;
+}
+
+@media (max-width: 767px) {
+  main {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .container-1,
+  .container-2 {
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px; /* Add margin to separate containers */
+  }
+
+  .container-1 p,
+  .container-2 p {
+    margin-top: 20px; /* Adjust margin-top for paragraph elements */
+  }
+
+  .container-1 img,
+  .container-2 img {
+    max-width: 100%; /* Ensure images occupy full width */
+    height: auto;
+    margin-bottom: 20px; /* Add margin below images */
+  }
+
+  .tabs {
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px; /* Add margin to separate tabs */
+  }
+
+  .tabs > div {
+    margin-bottom: 20px; /* Add margin below each tab */
+  }
+}
+

@@ -1,0 +1,31 @@
+.container{
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+h2{
+    color: #fff;
+    text-align: center;
+    margin-bottom: 20px;
+}
+ul{
+    list-style-type: none;
+    padding: 0;
+}
+#lis{
+    border: 1px solid #fff;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    padding: 10px;
+}
+p{
+    margin: 0;
+}
+.loading{
+    text-align: center;
+}
+.error{
+    color: red;
+    text-align: center;
+}

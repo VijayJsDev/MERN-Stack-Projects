@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import metroData from "./MetroData";
 import { Form, redirect, useActionData } from "react-router-dom";
+import "./BookTickets.css";
 
 function BookTickets() {
   const [origin, setOrigin] = useState("");
@@ -41,14 +42,28 @@ function BookTickets() {
 
   return (
     <>
-      <h1>MMRL Ticket Booking</h1>
-      <Form method="post">
-        <div>
-          <label>Choose Origin</label>
+      <div className="container">
+        <h1>MMRL Ticket Booking</h1>
+        <Form method="post" className="form">
+          <div>
+            <label>Choose Origin</label>
+            <select
+              value={origin}
+              onChange={originChangeHandler}
+              name="originName"
+            >
+              {metroData.map((place) => (
+                <option key={place.id} value={place.name}>
+                  {place.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <label>Choose Destination</label>
           <select
-            value={origin}
-            onChange={originChangeHandler}
-            name="originName"
+            value={destination}
+            onChange={destinationChangeHandler}
+            name="destinationName"
           >
             {metroData.map((place) => (
               <option key={place.id} value={place.name}>
@@ -56,48 +71,36 @@ function BookTickets() {
               </option>
             ))}
           </select>
-        </div>
-        <label>Choose Destination</label>
-        <select
-          value={destination}
-          onChange={destinationChangeHandler}
-          name="destinationName"
-        >
-          {metroData.map((place) => (
-            <option key={place.id} value={place.name}>
-              {place.name}
-            </option>
-          ))}
-        </select>
-        {origin === destination ? (
-          <p>Origin And Destination Can't Be Same</p>
-        ) : (
-          ""
-        )}
-        <div>
-          <label>Price Of Each Ticket</label>
-          <input type="text" value={price} readOnly name="priceName" />
-        </div>
-        <input type="hidden" name="price" value={price} />
-        <div>
-          <label>Quantity</label>
-          <input
-            type="number"
-            value={quantity}
-            min="1"
-            max="6"
-            onChange={quantityChangeHandler}
-            name="quantityName"
-          />
-          <p>Maximum Of 6 Tickets Can Be Booked!</p>
-        </div>
-        <div>
-          <h3>Total Price: ${totalPrice}</h3>
-        </div>
-        <div>
-          <button>Book Ticket</button>
-        </div>
-      </Form>
+          {origin === destination ? (
+            <p>Origin And Destination Can't Be Same</p>
+          ) : (
+            ""
+          )}
+          <div>
+            <label>Price Of Each Ticket</label>
+            <input type="text" value={price} readOnly name="priceName" />
+          </div>
+          <input type="hidden" name="price" value={price} />
+          <div>
+            <label>Quantity</label>
+            <input
+              type="number"
+              value={quantity}
+              min="1"
+              max="6"
+              onChange={quantityChangeHandler}
+              name="quantityName"
+            />
+            <p>Maximum Of 6 Tickets Can Be Booked!</p>
+          </div>
+          <div>
+            <h3 id='total-price'>Total Price: ${totalPrice}</h3>
+          </div>
+          <div>
+            <button>Book Ticket</button>
+          </div>
+        </Form>
+      </div>
     </>
   );
 }
@@ -111,21 +114,21 @@ export async function action({ request }) {
     destination: formData.get("destinationName"),
     price: formData.get("priceName"),
     quantity: formData.get("quantityName"),
-    user: localStorage.getItem('user'),
+    user: localStorage.getItem("user"),
   };
-  localStorage.setItem('bookingDetails', JSON.stringify(retrievedData));
+  localStorage.setItem("bookingDetails", JSON.stringify(retrievedData));
 
-  const response = await fetch('http://localhost:5050/bookTickets', {
-    method:'POST',
+  const response = await fetch("http://localhost:5050/bookTickets", {
+    method: "POST",
     headers: {
-      'Content-Type':'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(retrievedData),
-  })
-  if(!response.ok){
+  });
+  if (!response.ok) {
     return response;
   }
 
   const resData = await response.json();
-  return redirect('/payment');
+  return redirect("/payment");
 }
