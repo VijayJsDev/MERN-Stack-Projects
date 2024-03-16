@@ -4,9 +4,9 @@ import twilio from "twilio";
 
 const router = express.Router();
 
-const accountSid = "ACd35fdc27eb64824300f2b24a0c96da68";
-const authToken = "43541c560f731c00ce716e2e3645e142";
-const verifySid = "VAbc41a2d60a5f21aebc4dadc25e84c0b2";
+const accountSid = process.env.ACCOUNTSID;
+const authToken = process.env.AUTHTOKEN;
+const verifySid = process.env.VERIFYSID;
 
 const client = twilio(accountSid, authToken);
 
