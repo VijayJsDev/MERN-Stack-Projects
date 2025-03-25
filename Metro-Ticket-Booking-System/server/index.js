@@ -2,8 +2,7 @@ import json from "body-parser";
 import express from "express";
 import authRoutes from "./routes/auth.js";
 import cors from "cors";
-import bookTickets from "./routes/bookTickets.js"
-
+import bookTickets from "./routes/bookTickets.js";
 
 const PORT = process.env.PORT || 5050;
 const app = express();
@@ -15,6 +14,13 @@ app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,PATCH,DELETE");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   next();
+});
+
+// Simple health check endpoint
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    message: "Server is up and running",
+  });
 });
 
 app.use(authRoutes);
