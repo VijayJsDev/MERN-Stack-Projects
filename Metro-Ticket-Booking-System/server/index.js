@@ -1,8 +1,8 @@
 import json from "body-parser";
 import express from "express";
-import authRoutes from "./routes/auth.js";
+//import authRoutes from "./routes/auth.js";
 import cors from "cors";
-import bookTickets from "./routes/bookTickets.js";
+// import bookTickets from "./routes/bookTickets.js";
 
 const PORT = process.env.PORT || 5050;
 const app = express();
@@ -23,8 +23,8 @@ app.get("/health", (req, res) => {
   });
 });
 
-app.use(authRoutes);
-app.use(bookTickets);
+// app.use(authRoutes);
+// app.use(bookTickets);
 
 app.listen(PORT, () => {
   console.log(`Server Running On ${PORT}`);
