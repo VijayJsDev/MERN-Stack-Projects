@@ -19,7 +19,7 @@ app.use((req, res, next) => {
 // Simple health check endpoint
 app.get("/health", (req, res) => {
   res.status(200).json({
-    message: "Server is up and running",
+    message: "Server is up and running..............",
   });
 });
 
